@@ -15,9 +15,9 @@ IMPLEMENTATION:
 
 PUBLIC
 bool
-Sigma0_task::v_fabricate(Mem_space::Vaddr address,
-                         Mem_space::Phys_addr* phys, Mem_space::Size* size,
-                         unsigned* attribs = 0)
+Sigma0_task::v_fabricate_map_src(Mem_space::Vaddr address,
+                                 Mem_space::Phys_addr* phys, Mem_space::Size* size,
+                                 unsigned* attribs = 0)
 {
   // special-cased because we don't do ptab lookup for sigma0
   *size = Mem_space::has_superpages()

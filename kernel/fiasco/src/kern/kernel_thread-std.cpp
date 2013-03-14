@@ -58,8 +58,9 @@ Kernel_thread::init_workload()
   // create sigma0
   //
 
+  // use 4 pages for sigma0 UTCB area
   Task *sigma0 = Task::create<Sigma0_task>(Ram_quota::root,
-      L4_fpage::mem(Mem_layout::Utcb_addr, Config::PAGE_SHIFT));
+      L4_fpage::mem(Mem_layout::Utcb_addr, Config::PAGE_SHIFT + 2));
 
   assert_opt (sigma0);
   // prevent deletion of this thing
@@ -91,50 +92,9 @@ Kernel_thread::init_workload()
   check (sigma0_thread->bind(sigma0, User<Utcb>::Ptr((Utcb*)Mem_layout::Utcb_addr)));
   check (sigma0_thread->ex_regs(Kip::k()->sigma0_ip, sp));
 
-  //
-  // create the boot task
-  //
-
-  Task *boot_task = Task::create<Task>(Ram_quota::root,
-      L4_fpage::mem(Mem_layout::Utcb_addr, Config::PAGE_SHIFT+2));
-
-  assert_opt (boot_task);
-
-  // prevent deletion of this thing
-  boot_task->inc_ref();
-
-  Thread_object *boot_thread = new (Ram_quota::root) Thread_object();
-
-  assert_kdb (boot_thread);
-
-  // prevent deletion of this thing
-  boot_thread->inc_ref();
-
-  check (map(boot_task,   boot_task, boot_task, C_task, 0));
-  check (map(boot_thread, boot_task, boot_task, C_thread, 0));
-
-  check (boot_thread->control(Thread_ptr(C_pager), Thread_ptr(~0UL)) == 0);
-  check (boot_thread->bind(boot_task, User<Utcb>::Ptr((Utcb*)Mem_layout::Utcb_addr)));
-  check (boot_thread->ex_regs(Kip::k()->root_ip, Kip::k()->root_sp));
-
-  Ipc_gate *s0_b_gate = Ipc_gate::create(Ram_quota::root, sigma0_thread, 4 << 4);
-
-  check (s0_b_gate);
-  check (map(s0_b_gate, boot_task, boot_task, C_pager, 0));
-
   set_cpu_of(sigma0_thread, 0);
-  set_cpu_of(boot_thread, 0);
 
   sigma0_thread->activate();
-  check (obj_map(sigma0, C_factory,   1, boot_task, C_factory, 0).error() == 0);
-  for (unsigned c = Initial_kobjects::First_cap; c < Initial_kobjects::End_cap; ++c)
-    {
-      Kobject_iface *o = initial_kobjects.obj(c);
-      if (o)
-	check(obj_map(sigma0, c, 1, boot_task, c, 0).error() == 0);
-    }
-
-  boot_thread->activate();
 }
 
 IMPLEMENTATION [ia32,amd64]:

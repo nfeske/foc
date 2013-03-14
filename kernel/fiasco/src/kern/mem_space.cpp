@@ -200,6 +200,14 @@ Mem_space::v_fabricate(Vaddr address,
       phys, size, attribs);
 }
 
+PUBLIC
+virtual bool
+Mem_space::v_fabricate_map_src(Vaddr address,
+                               Phys_addr* phys, Size* size, unsigned* attribs = 0)
+{
+  return Mem_space::v_fabricate(address, phys, size, attribs);
+}
+
 PUBLIC virtual
 bool
 Mem_space::is_sigma0() const

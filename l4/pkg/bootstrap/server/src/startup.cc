@@ -93,7 +93,7 @@ static int roottask = 1; /* we need a roottask */
 enum {
   kernel_module,
   sigma0_module,
-  roottask_module,
+  roottask_module = sigma0_module,
 };
 
 /* we define a small stack for sigma0 and roottask here -- it is used by L4
@@ -1257,7 +1257,7 @@ startup(l4util_mb_info_t *mbi, l4_umword_t flag,
   if (sigma0)
     add_elf_regions(mbi, sigma0_module, Region::Sigma0);
 
-  if (roottask)
+  if (roottask && (sigma0 != roottask))
     add_elf_regions(mbi, roottask_module, Region::Root);
 
 

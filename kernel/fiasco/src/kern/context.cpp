@@ -37,6 +37,7 @@ public:
 
   bool is_kernel() const { return false; }
   bool is_valid() const { return _t != ~0UL; }
+  bool is_null() const { return _t == 0UL; }
 
   // only for debugging use
   Mword raw() const { return _t;}

@@ -67,7 +67,8 @@ int Thread::handle_page_fault (Address pfa, Mword error_code, Mword pc,
       // belong to this thread.
       //assert_kdb (mem_space() == current_mem_space());
 
-      if (EXPECT_FALSE (mem_space()->is_sigma0()))
+      // Handle sigma0 page fauls only if no pager is set.
+      if (EXPECT_FALSE (mem_space()->is_sigma0()) && _pager.is_null())
         {
           // special case: sigma0 can map in anything from the kernel
 	  if(handle_sigma0_page_fault(pfa))

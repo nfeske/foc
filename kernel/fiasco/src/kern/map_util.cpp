@@ -464,8 +464,8 @@ map(MAPDB* mapdb,
       // Sigma0 special case: Sigma0 doesn't need to have a
       // fully-constructed page table, and it can fabricate mappings
       // for all physical addresses.:435
-      if (EXPECT_FALSE(! from->v_fabricate(snd_addr, &s_phys,
-                                           &s_size, &s_attribs)))
+      if (EXPECT_FALSE(! from->v_fabricate_map_src(snd_addr, &s_phys,
+                                                   &s_size, &s_attribs)))
 	continue;
 
       // We have a mapping in the sender's address space.
@@ -753,24 +753,24 @@ unmap(MAPDB* mapdb, SPACE* space, Space *space_id,
 	  need_xcpu_tlb_flush = true;
 	}
 
-      // now delete from the other address spaces
-      for (Iterator m(mapdb_frame, mapping, address, end);
-	   m;
-	   ++m)
-	{
-	  page_rights |= Mu::v_delete<SPACE>(m, flush_rights, full_flush);
-	  need_xcpu_tlb_flush = true;
-	}
+//      // now delete from the other address spaces
+//      for (Iterator m(mapdb_frame, mapping, address, end);
+//	   m;
+//	   ++m)
+//	{
+//	  page_rights |= Mu::v_delete<SPACE>(m, flush_rights, full_flush);
+//	  need_xcpu_tlb_flush = true;
+//	}
 
       flushed_rights |= page_rights;
 
-      // Store access attributes for later retrieval
-      save_access_attribs(mapdb, mapdb_frame, mapping,
-			  space, page_rights, page_address, phys, phys_size,
-			  me_too);
+//      // Store access attributes for later retrieval
+//      save_access_attribs(mapdb, mapdb_frame, mapping,
+//			  space, page_rights, page_address, phys, phys_size,
+//			  me_too);
 
-      if (full_flush)
-	mapdb->flush(mapdb_frame, mapping, mask, address, end);
+//      if (full_flush)
+//	mapdb->flush(mapdb_frame, mapping, mask, address, end);
 
       if (full_flush)
 	Map_traits<SPACE>::free_object(phys, reap_list);

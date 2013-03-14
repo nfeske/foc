@@ -239,6 +239,15 @@ Generic_obj_space<SPACE>::v_fabricate(Addr const &address,
   return Generic_obj_space::v_lookup(address, phys, size, attribs);
 }
 
+PUBLIC template< typename SPACE >
+inline
+bool
+Generic_obj_space<SPACE>::v_fabricate_map_src(Addr const &address,
+                                              Phys_addr *phys, Size *size,
+                                              unsigned* attribs = 0)
+{
+  return Generic_obj_space::v_fabricate(address, phys, size, attribs);
+}
 
 PUBLIC template< typename SPACE >
 inline static

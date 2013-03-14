@@ -195,6 +195,15 @@ Generic_io_space<SPACE>::v_fabricate(Addr address, Phys_addr *phys,
 }
 
 PUBLIC template< typename SPACE >
+virtual
+bool
+Generic_io_space<SPACE>::v_fabricate_map_src(Addr address, Phys_addr *phys,
+                                             Size *size, unsigned *attribs = 0)
+{
+  return Generic_io_space::v_fabricate(address, phys, size, attribs);
+}
+
+PUBLIC template< typename SPACE >
 inline NEEDS[Generic_io_space::is_superpage]
 bool
 Generic_io_space<SPACE>::v_lookup(Addr virt, Phys_addr *phys = 0,

@@ -404,8 +404,14 @@ Thread::handle_sigma0_page_fault(Address pfa)
 {
   size_t size;
 
+  // Don't back roottask with superpages. Otherwise, we would end up with
+  // a one-to-one mapping of physical memory starting at 0. Most of this
+  // range should never be implicitly mapped to roottask. We only want to
+  // establish the mappings needed to access the actual roottask image.
+  enum { SIGMA0_IS_ROOTTASK = true };
+
   // Check if mapping a superpage doesn't exceed the size of physical memory
-  if (Cpu::have_superpages()
+  if (Cpu::have_superpages() && !SIGMA0_IS_ROOTTASK
      // Some distributions do not allow to mmap below a certain threshold
      // (like 64k on Ubuntu 8.04) so we cannot map a superpage at 0 if
      // we're Fiasco-UX
